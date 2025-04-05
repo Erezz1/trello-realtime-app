@@ -1,64 +1,62 @@
-import { useState } from "react";
 import styled from "styled-components";
 import { DragDropContext, Droppable, DropResult } from "@hello-pangea/dnd";
+import { useSelector, useDispatch } from "react-redux";
 
 import { Column } from "./Column";
-
-const initialData = [
-  {
-    id: "column-1",
-    title: "To Do",
-    taskIds: [
-      { id: "task-1", title: "Task 1", description: "Do something" },
-      { id: "task-2", title: "Task 2", description: "Do something else" },
-      { id: "task-4", title: "Task 4", description: "Do something else" },
-      { id: "task-5", title: "Task 5", description: "Do something else" },
-    ]
-  },
-  {
-    id: "column-2",
-    title: "In Progress",
-    taskIds: [
-      { id: "task-3", title: "Task 3", description: "Keep going" },
-      { id: "task-6", title: "Task 6", description: "Do something else" }
-    ]
-  }
-];
+import type { RootState } from "@/lib/store";
+import { setBoard } from "@/lib/features/board/boardSlice";
 
 export const Board = () => {
-  const [columns, setColumns] = useState(initialData);
+  const board = useSelector((state: RootState) => state.board.value);
+  const dispatch = useDispatch();
 
   const onDragEnd = (result: DropResult) => {
     const { source, destination } = result;
-
     if (!destination) return;
 
-    const sourceColIndex = columns.findIndex(c => c.id === source.droppableId);
-    const destColIndex = columns.findIndex(c => c.id === destination.droppableId);
+    const sourceColIndex = board.findIndex(c => c.id === source.droppableId);
+    const destColIndex = board.findIndex(c => c.id === destination.droppableId);
 
-    const sourceCol = columns[sourceColIndex];
-    const destCol = columns[destColIndex];
+    const sourceCol = board[sourceColIndex];
+    const destCol = board[destColIndex];
 
-    const [movedTask] = sourceCol.taskIds.splice(source.index, 1);
+    // Crear copias profundas de las listas de tareas
+    const sourceTasks = [...sourceCol.tasks];
+    const destTasks = sourceCol === destCol ? sourceTasks : [...destCol.tasks];
 
-    if (sourceCol === destCol) {
-      sourceCol.taskIds.splice(destination.index, 0, movedTask);
-      const newCols = [...columns];
-      newCols[sourceColIndex] = { ...sourceCol };
-      setColumns(newCols);
-    } else {
-      destCol.taskIds.splice(destination.index, 0, movedTask);
-      const newCols = [...columns];
-      newCols[sourceColIndex] = { ...sourceCol };
-      newCols[destColIndex] = { ...destCol };
-      setColumns(newCols);
+    // Remover la tarea movida
+    const [movedTask] = sourceTasks.splice(source.index, 1);
+
+    // Insertar en nueva posición
+    destTasks.splice(destination.index, 0, movedTask);
+
+    // Crear nuevas columnas
+    const newSourceCol = {
+      ...sourceCol,
+      tasks: sourceTasks,
+    };
+
+    const newDestCol = sourceCol === destCol
+      ? newSourceCol
+      : {
+        ...destCol,
+        tasks: destTasks,
+      };
+
+    // Construir nuevo board
+    const newBoard = [...board];
+    newBoard[sourceColIndex] = newSourceCol;
+    if (sourceCol !== destCol) {
+      newBoard[destColIndex] = newDestCol;
     }
-  };
+
+    dispatch(setBoard(newBoard));
+  };  
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <BoardContainer>
-        {columns.map(column => (
+        {board.map(column => (
           <Droppable droppableId={column.id} key={column.id}>
             {(provided) => (
               <Column column={column} provided={provided}  />

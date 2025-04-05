@@ -43,4 +43,3 @@ const TaskDescription = styled.p`
   color: #5e6c84;
   margin-top: 4px;
 `;
-

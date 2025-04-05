@@ -16,7 +16,7 @@ export const Column: React.FC<ColumnProps> = ({ provided, column }) => {
       ref={provided.innerRef}
     >
       <ColumnTitle>{column.title}</ColumnTitle>
-      {column.taskIds.map((task, index) => (
+      {column.tasks.map((task, index) => (
         <Task task={task} index={index} key={task.id} />
       ))}
       {provided.placeholder}

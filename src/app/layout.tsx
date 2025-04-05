@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+
+import { StoreProvider } from "./StoreProvider";
 import StyledComponentsRegistry from "@/lib/registry";
 
 import "./globals.css";
@@ -27,9 +29,11 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <StyledComponentsRegistry>
-          {children}
-        </StyledComponentsRegistry>
+        <StoreProvider>
+          <StyledComponentsRegistry>
+            {children}
+          </StyledComponentsRegistry>
+        </StoreProvider>
       </body>
     </html>
   );
