@@ -11,3 +11,8 @@ export interface Task {
   title: string;
   description: string;
 }
+
+export interface Session {
+  email: string;
+  token: string;
+}

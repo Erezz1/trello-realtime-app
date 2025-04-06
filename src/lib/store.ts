@@ -1,10 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
+
 import boardReducer from "./features/board/slice";
+import sessionReducer from "./features/session/slice";
 
 export const makeStore = () => {
   return configureStore({
     reducer: {
-      board: boardReducer
+      board: boardReducer,
+      session: sessionReducer,
     },
   });
 };

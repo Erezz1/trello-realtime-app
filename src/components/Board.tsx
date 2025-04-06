@@ -2,13 +2,21 @@
 import { DragDropContext, Droppable, DropResult } from "@hello-pangea/dnd";
 
 import { setBoard } from "@/lib/features/board/slice";
-import { BoardContainer } from "@/ui/components/board";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { BoardContainer } from "@/ui/components/board";
+import { generateNewBoard } from "@/helpers/generateNewBoard";
+import { Column as ColumnType, Session } from "@/interfaces/types";
 
 import { Column } from "./Column";
-import { generateNewBoard } from "@/helpers/generateNewBoard";
+import { useEffect } from "react";
+import { login } from "@/lib/features/session/slice";
 
-export const Board = () => {
+interface BoardProps {
+  board: ColumnType[];
+  session: Session;
+}
+
+export const Board: React.FC<BoardProps> = (props) => {
   const board = useAppSelector(({ board }) => board.value);
   const dispatch = useAppDispatch();
 
@@ -17,6 +25,11 @@ export const Board = () => {
     if (!newBoard) return;
     dispatch(setBoard(newBoard));
   };
+
+  useEffect(() => {
+    dispatch(setBoard(props.board));
+    login(props.session);
+  }, []);
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>

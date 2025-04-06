@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { login } from "@/services";
 import { SESSION_COOKIE } from "@/lib/constants";
 import { setCookie } from "@/lib/actions/cookies";
-import { encryptToken } from "@/lib/actions/encrypt";
+import { encryptSession } from "@/lib/actions/encrypt";
 import { generateTOtp, generateSecretKey } from "@/lib/actions/totp";
 import {
   LoginButton,
@@ -25,6 +25,7 @@ const Login = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!isFormValid || isLoading) return;
     setIsLoading(true);
 
     const secretKey = await generateSecretKey();
@@ -32,7 +33,7 @@ const Login = () => {
     const token = await login(email, password, tOtp, secretKey);
 
     if (token) {
-      const tokenEncrypted = await encryptToken(token);
+      const tokenEncrypted = await encryptSession(token, email);
       await setCookie(SESSION_COOKIE, tokenEncrypted);
       router.push("/dashboard");
       return;
