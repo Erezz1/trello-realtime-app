@@ -1,3 +1,5 @@
+export type Board = Column[];
+
 export interface Column {
   id: string;
   title: string;
