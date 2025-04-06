@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-import { login } from "@/services";
+import { login } from "@/services/session";
 import { SESSION_COOKIE } from "@/lib/constants";
 import { setCookie } from "@/lib/actions/cookies";
 import { encryptSession } from "@/lib/actions/encrypt";
@@ -67,6 +67,7 @@ const Login = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+          autoComplete="on"
         />
 
         <LoginButton

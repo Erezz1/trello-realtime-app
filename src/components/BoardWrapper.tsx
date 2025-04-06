@@ -1,14 +1,13 @@
 "use server";
 import { redirect } from "next/navigation";
 
-import boardMock from "@/__mocks__/board.json";
 import { Session } from "@/interfaces/types";
-import { sleep } from "@/lib/utils/sleep";
 import { deleteCookie, getCookie } from "@/lib/actions/cookies";
 import { SESSION_COOKIE } from "@/lib/constants";
 import { decryptSession } from "@/lib/actions/encrypt";
 
 import { Board } from "./Board";
+import { getBoard } from "@/services/board";
 
 const BoardWrapper = async () => {
   const encryptedSession = await getCookie(SESSION_COOKIE);
@@ -27,9 +26,7 @@ const BoardWrapper = async () => {
     return redirect("/login");
   }
 
-  // TODO: Obtener el tablero desde el backend
-  await sleep(5000);
-  const board = boardMock;
+  const board = await getBoard(session.email);
 
   return (
     <Board session={session} board={board} />

@@ -2,11 +2,10 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 import { Board, Column, Task } from "@/interfaces/types";
-import initialBoard from "@/__mocks__/board.json";
 import { BoardState } from "./types";
 
 const initialState: BoardState = {
-  value: initialBoard,
+  value: [],
 };
 
 export const boardSlice = createSlice({

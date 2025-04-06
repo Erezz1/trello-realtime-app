@@ -1,4 +1,6 @@
 export const SESSION_COOKIE = "session";
+export const SUPABASE_URL = "https://pjtlaxrgpmmbqvzorilm.supabase.co";
+export const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqdGxheHJncG1tYnF2em9yaWxtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM5NjQzMTQsImV4cCI6MjA1OTU0MDMxNH0.AXKSleMCNnJG9WTrbib2lh9-9BC70japf5I2ERweCDU";
 
 export const SESSION_API_URL = process.env.SESSION_API_URL!;
 export const SESSION_ENCRYPTION_KEY = process.env.SESSION_ENCRYPTION_KEY!;
