@@ -4,7 +4,7 @@ import { useAppDispatch } from "@/lib/hooks";
 import { setBoard } from "@/lib/features/board/slice";
 
 import { orderBoard } from "@/helpers/orderBoard";
-import { getBoard } from "@/services/board";
+import { getBoard } from "@/lib/supabase/board";
 
 export const useRealtimeBoard = (email: string) => {
   const dispatch = useAppDispatch();

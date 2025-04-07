@@ -11,9 +11,9 @@ import {
   LoginButton,
   LoginContainer,
   LoginForm,
-  LoginInput,
   LoginTitle
 } from "@/ui/pages/login";
+import { Input } from "@/ui/components/inputs";
 
 const Login = () => {
   const router = useRouter();
@@ -52,7 +52,7 @@ const Login = () => {
       <LoginForm onSubmit={handleSubmit}>
         <LoginTitle>Inicia sesión</LoginTitle>
 
-        <LoginInput
+        <Input
           type="email"
           name="email"
           placeholder="Correo electrónico"
@@ -60,7 +60,7 @@ const Login = () => {
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-        <LoginInput
+        <Input
           type="password"
           name="password"
           placeholder="Contraseña"

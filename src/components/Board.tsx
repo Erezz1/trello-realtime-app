@@ -14,6 +14,7 @@ import { Column as ColumnType, Session } from "@/interfaces/types";
 import { useRealtimeBoard } from "@/hooks/useRealtimeBoard";
 
 import { Column } from "./Column";
+import { AddColumn } from "./AddColumn";
 
 interface BoardProps {
   board: ColumnType[];
@@ -60,7 +61,8 @@ export const Board: React.FC<BoardProps> = (props) => {
 
   useEffect(() => {
     dispatch(setBoard(props.board));
-    login(props.session);
+    dispatch(login(props.session));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useRealtimeBoard(props.session.email);
 
@@ -74,6 +76,8 @@ export const Board: React.FC<BoardProps> = (props) => {
             )}
           </Droppable>
         ))}
+
+        <AddColumn />
       </BoardContainer>
     </DragDropContext>
   );

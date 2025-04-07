@@ -15,7 +15,7 @@ export const Header = () => {
 
   return (
     <HeaderContainer>
-      <h1>Bienvenido a tu tablero</h1>
+      <h1 style={{ margin: "0" }}>Bienvenido a tu tablero</h1>
       <button onClick={handleLogout}>
         Cerrar sesión
       </button>

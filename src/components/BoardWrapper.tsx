@@ -7,7 +7,7 @@ import { SESSION_COOKIE } from "@/lib/constants";
 import { decryptSession } from "@/lib/actions/encrypt";
 
 import { Board } from "./Board";
-import { getBoard } from "@/services/board";
+import { getBoard } from "@/lib/supabase/board";
 import { orderBoard } from "@/helpers/orderBoard";
 
 const BoardWrapper = async () => {

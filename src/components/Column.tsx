@@ -1,8 +1,9 @@
 import { DroppableProvided } from "@hello-pangea/dnd";
 
 import { Column as ColumnType } from "@/interfaces/types";
-import { Task } from "./Task";
 import { ColumnContainer, ColumnTitle } from "@/ui/components/column";
+import { Task } from "./Task";
+import { AddTask } from "./AddTask";
 
 interface ColumnProps {
   provided: DroppableProvided;
@@ -16,6 +17,7 @@ export const Column: React.FC<ColumnProps> = ({ provided, column }) => {
       ref={provided.innerRef}
     >
       <ColumnTitle>{column.title}</ColumnTitle>
+      <AddTask />
       {column.tasks.map((task, index) => (
         <Task task={task} index={index} key={task.id} />
       ))}

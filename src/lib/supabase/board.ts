@@ -1,3 +1,4 @@
+"use server";
 import { Board } from "@/interfaces/types";
 import { supabase } from "@/lib/supabase/client";
 
@@ -8,6 +9,7 @@ export const getBoard = async (email: string) => {
       columns (
         id,
         title,
+        position,
         tasks (
           id,
           title,
