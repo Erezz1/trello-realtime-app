@@ -12,34 +12,31 @@ export const generateNewBoard = (dropResult: DropResult, board: Board) => {
   const sourceCol = board[sourceColIndex];
   const destCol = board[destColIndex];
 
-  // Crear copias profundas de las listas de tareas
   const sourceTasks = [...sourceCol.tasks];
   const destTasks = sourceCol === destCol ? sourceTasks : [...destCol.tasks];
 
-  // Remover la tarea movida
   const [movedTask] = sourceTasks.splice(source.index, 1);
-
-  // Insertar en nueva posición
   destTasks.splice(destination.index, 0, movedTask);
 
-  // Crear nuevas columnas
-  const newSourceCol = {
+  // Reasignar posiciones secuenciales en ambas columnas
+  const updatedSourceCol = {
     ...sourceCol,
-    tasks: sourceTasks,
+    tasks: sourceCol.id === destCol.id
+      ? destTasks.map((task, index) => ({ ...task, position: index + 1 }))
+      : sourceTasks.map((task, index) => ({ ...task, position: index + 1 })),
   };
 
-  const newDestCol = sourceCol === destCol
-    ? newSourceCol
+  const updatedDestCol = sourceCol.id === destCol.id
+    ? updatedSourceCol
     : {
       ...destCol,
-      tasks: destTasks,
+      tasks: destTasks.map((task, index) => ({ ...task, position: index + 1 })),
     };
 
-  // Construir nuevo board
   const newBoard = [...board];
-  newBoard[sourceColIndex] = newSourceCol;
-  if (sourceCol !== destCol) {
-    newBoard[destColIndex] = newDestCol;
+  newBoard[sourceColIndex] = updatedSourceCol;
+  if (sourceCol.id !== destCol.id) {
+    newBoard[destColIndex] = updatedDestCol;
   }
 
   return newBoard;

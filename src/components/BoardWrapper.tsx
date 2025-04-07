@@ -8,6 +8,7 @@ import { decryptSession } from "@/lib/actions/encrypt";
 
 import { Board } from "./Board";
 import { getBoard } from "@/services/board";
+import { orderBoard } from "@/helpers/orderBoard";
 
 const BoardWrapper = async () => {
   const encryptedSession = await getCookie(SESSION_COOKIE);
@@ -27,9 +28,10 @@ const BoardWrapper = async () => {
   }
 
   const board = await getBoard(session.email);
+  const orderedBoard = orderBoard(board);
 
   return (
-    <Board session={session} board={board} />
+    <Board session={session} board={orderedBoard} />
   );
 };
 

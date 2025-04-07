@@ -1,19 +1,11 @@
 "use server";
 import { supabase } from "@/lib/supabase/client";
 
-export const updateTask = async (
-  taskId: string,
-  newColumnId: string,
-) => {
+export const updateTask = async (taskId: string, columnId: string, position: number) => {
   const { error } = await supabase
     .from("tasks")
-    .update({
-      column_id: newColumnId,
-    })
+    .update({ column_id: columnId, position })
     .eq("id", taskId);
 
-  if (error) {
-    console.log(error);
-    throw error;
-  }
+  if (error) throw error;
 };

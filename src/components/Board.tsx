@@ -8,6 +8,7 @@ import { login } from "@/lib/features/session/slice";
 import { updateTask } from "@/lib/supabase/tasks";
 
 import { BoardContainer } from "@/ui/components/board";
+import { orderBoard } from "@/helpers/orderBoard";
 import { generateNewBoard } from "@/helpers/generateNewBoard";
 import { Column as ColumnType, Session } from "@/interfaces/types";
 import { useRealtimeBoard } from "@/hooks/useRealtimeBoard";
@@ -26,18 +27,34 @@ export const Board: React.FC<BoardProps> = (props) => {
   const onDragEnd = async (result: DropResult) => {
     const newBoard = generateNewBoard(result, board);
     if (!newBoard) return;
-    dispatch(setBoard(newBoard));
-
-    const movedTask = board
-      .find(col => col.id === result.source.droppableId)
-      ?.tasks[result.source.index];
-
-    if (!movedTask || !result.destination) return;
-
+  
+    const ordered = orderBoard(newBoard); 
+    dispatch(setBoard(ordered));
+  
+    const { source, destination } = result;
+    if (!destination) return;
+  
+    // Encontrar columnas afectadas
+    const sourceCol = ordered.find(c => c.id === source.droppableId);
+    const destCol = ordered.find(c => c.id === destination.droppableId);
+  
+    if (!sourceCol || !destCol) return;
+  
+    // Unificar columnas a actualizar
+    const colsToUpdate = source.droppableId === destination.droppableId
+      ? [sourceCol]
+      : [sourceCol, destCol];
+  
     try {
-      await updateTask(movedTask.id, result.destination.droppableId);
+      const updates = colsToUpdate.flatMap(column =>
+        column.tasks.map(task =>
+          updateTask(task.id, column.id, task.position)
+        )
+      );
+    
+      await Promise.all(updates);
     } catch (error) {
-      console.error("Error actualizando la tarea en Supabase", error);
+      console.error("Error actualizando posiciones en Supabase", error);
     }
   };
 

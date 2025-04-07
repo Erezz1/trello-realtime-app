@@ -1,7 +1,9 @@
 import { useEffect } from "react";
 import { supabase } from "@/lib/supabase/client";
-import { useAppDispatch } from "@/lib/hooks"; // Asegúrate de que useAppSelector esté importado
+import { useAppDispatch } from "@/lib/hooks";
 import { setBoard } from "@/lib/features/board/slice";
+
+import { orderBoard } from "@/helpers/orderBoard";
 import { getBoard } from "@/services/board";
 
 export const useRealtimeBoard = (email: string) => {
@@ -15,7 +17,8 @@ export const useRealtimeBoard = (email: string) => {
     const updateBoard = async () => {
       try {
         const newBoard = await getBoard(email);
-        dispatch(setBoard(newBoard));
+        const ordered = orderBoard(newBoard);
+        dispatch(setBoard(ordered));
       } catch (error) {
         console.error("Error fetching board data:", error);
       }
