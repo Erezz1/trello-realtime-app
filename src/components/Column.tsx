@@ -17,7 +17,7 @@ export const Column: React.FC<ColumnProps> = ({ provided, column }) => {
       ref={provided.innerRef}
     >
       <ColumnTitle>{column.title}</ColumnTitle>
-      <AddTask />
+      <AddTask column={column} />
       {column.tasks.map((task, index) => (
         <Task task={task} index={index} key={task.id} />
       ))}
