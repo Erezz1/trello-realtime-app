@@ -8,12 +8,12 @@ import { setCookie } from "@/lib/actions/cookies";
 import { encryptSession } from "@/lib/actions/encrypt";
 import { generateTOtp, generateSecretKey } from "@/lib/actions/totp";
 import {
-  LoginButton,
   LoginContainer,
   LoginForm,
   LoginTitle
 } from "@/ui/pages/login";
 import { Input } from "@/ui/components/inputs";
+import { PrimaryButton } from "@/ui/components/buttons";
 
 const Login = () => {
   const router = useRouter();
@@ -70,12 +70,12 @@ const Login = () => {
           autoComplete="on"
         />
 
-        <LoginButton
+        <PrimaryButton
           type="submit"
           disabled={!isFormValid || isLoading}
         >
           {isLoading ? "Cargando..." : "Iniciar sesión"}
-        </LoginButton>
+        </PrimaryButton>
       </LoginForm>
     </LoginContainer>
   );

@@ -26,33 +26,32 @@ export const Board: React.FC<BoardProps> = (props) => {
   const dispatch = useAppDispatch();
 
   const onDragEnd = async (result: DropResult) => {
-    const newBoard = generateNewBoard(result, board);
-    if (!newBoard) return;
-  
-    const ordered = orderBoard(newBoard); 
-    dispatch(setBoard(ordered));
-  
     const { source, destination } = result;
     if (!destination) return;
-  
-    // Encontrar columnas afectadas
-    const sourceCol = ordered.find(c => c.id === source.droppableId);
-    const destCol = ordered.find(c => c.id === destination.droppableId);
-  
+
+    const newBoard = generateNewBoard(result, board);
+    if (!newBoard) return;
+
+    const ordered = orderBoard(newBoard);
+    dispatch(setBoard(ordered));
+
+    const sourceCol = ordered.find(col => col.id === destination.droppableId);
+    const destCol = ordered.find(col => col.id === destination.droppableId);
+
     if (!sourceCol || !destCol) return;
-  
-    // Unificar columnas a actualizar
-    const colsToUpdate = source.droppableId === destination.droppableId
-      ? [sourceCol]
-      : [sourceCol, destCol];
-  
+
+    const colsToUpdate =
+      source.droppableId === destination.droppableId
+        ? [sourceCol]
+        : [sourceCol, destCol];
+
     try {
-      const updates = colsToUpdate.flatMap(column =>
-        column.tasks.map(task =>
+      const updates = colsToUpdate.flatMap((column) =>
+        column.tasks.map((task) =>
           updateTask(task.id, column.id, task.position)
         )
       );
-    
+
       await Promise.all(updates);
     } catch (error) {
       console.error("Error actualizando posiciones en Supabase", error);

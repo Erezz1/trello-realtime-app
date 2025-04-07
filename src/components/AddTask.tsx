@@ -3,7 +3,7 @@ import { useState } from "react";
 import { addTask } from "@/lib/supabase/tasks";
 import { useAppDispatch } from "@/lib/hooks";
 import { PrimaryButton } from "@/ui/components/buttons";
-import { Input } from "@/ui/components/inputs";
+import { Input, TextArea } from "@/ui/components/inputs";
 import { FormContainer } from "@/ui/components/form";
 
 import { Column } from "@/interfaces/types";
@@ -14,8 +14,10 @@ interface AddTaskProps {
 }
 
 export const AddTask: React.FC<AddTaskProps> = ({ column }) => {
-  const dispatch = useAppDispatch();
   const [ showAddInputTask, setShowAddInputTask ] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const dispatch = useAppDispatch();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -24,6 +26,7 @@ export const AddTask: React.FC<AddTaskProps> = ({ column }) => {
     const description = formData.get("task-description") as string;
 
     if (!title || !description) return;
+    setIsLoading(true);
 
     const addedTask = await addTask(
       title,
@@ -31,6 +34,8 @@ export const AddTask: React.FC<AddTaskProps> = ({ column }) => {
       column.id,
       column.tasks.length + 1
     );
+
+    setIsLoading(false);
     if (!addedTask) return;
 
     dispatch(
@@ -70,13 +75,15 @@ export const AddTask: React.FC<AddTaskProps> = ({ column }) => {
         name="task-title"
         required
       />
-      <Input
-        type="text"
+      <TextArea
         placeholder="Descripcion"
         name="task-description"
         required
       />
-      <PrimaryButton type="submit">
+      <PrimaryButton
+        type="submit"
+        disabled={isLoading}
+      >
         Agregar tarea
       </PrimaryButton>
     </FormContainer>
