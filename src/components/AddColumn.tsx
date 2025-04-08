@@ -5,11 +5,12 @@ import { Input } from "@/ui/components/inputs";
 import { FormContainer } from "@/ui/components/form";
 
 import { addColumn } from "@/lib/supabase/columns";
-import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { useAppDispatch } from "@/lib/hooks";
 import { addColumn as addColumnAct } from "@/lib/features/board/slice";
+import { useCache } from "@/hooks/useCache";
 
 export const AddColumn = () => {
-  const session = useAppSelector(state => state.session.value)!;
+  const { session } = useCache();
   const dispatch = useAppDispatch();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -18,7 +19,7 @@ export const AddColumn = () => {
     const title = formData.get("column-title") as string;
     if (!title) return;
 
-    const columnAdded = await addColumn(title, session?.email);
+    const columnAdded = await addColumn(title, session.email);
     if (!columnAdded) return;
 
     dispatch(addColumnAct(columnAdded));

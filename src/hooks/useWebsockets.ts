@@ -6,14 +6,12 @@ import { setBoard } from "@/lib/features/board/slice";
 import { orderBoard } from "@/helpers/orderBoard";
 import { getBoard, getCacheBoard } from "@/lib/supabase/board";
 
-export const useRealtimeBoard = (email: string) => {
+export const useWebsockets = (email: string) => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    // Verifica si el canal ya existe
     const channel = supabase.channel(`realtime-board-${email}`);
 
-    // Actualiza el board cuando haya un cambio en columnas o tareas
     const updateBoard = async () => {
       let newBoard;
       try {
@@ -28,16 +26,12 @@ export const useRealtimeBoard = (email: string) => {
       }
     };
 
-    // Se suscribe a los cambios en las tablas Column y Task
     channel
-      .on("postgres_changes", { event: "*", schema: "public", table: "columns" }, updateBoard)
-      .on("postgres_changes", { event: "*", schema: "public", table: "tasks" }, updateBoard)
+      .on("postgres_changes", { event: "*", schema: "public", table: "cache" }, updateBoard)
       .subscribe();
 
-    // Ejecuta updateBoard cuando el estado de board cambie
     updateBoard();
 
-    // Limpiar el canal cuando el componente se desmonte
     return () => {
       supabase.removeChannel(channel);
     };

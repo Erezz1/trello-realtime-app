@@ -12,7 +12,7 @@ import { BoardContainer } from "@/ui/components/board";
 import { orderBoard } from "@/helpers/orderBoard";
 import { generateNewBoard } from "@/helpers/generateNewBoard";
 import { Column as ColumnType, Session } from "@/interfaces/types";
-import { useRealtimeBoard } from "@/hooks/useRealtimeBoard";
+import { useWebsockets } from "@/hooks/useWebsockets";
 
 import { Column } from "./Column";
 import { AddColumn } from "./AddColumn";
@@ -23,7 +23,8 @@ interface BoardProps {
 }
 
 export const Board: React.FC<BoardProps> = (props) => {
-  const board = useCache();
+  const { board } = useCache();
+  useWebsockets(props.session.email);
   const dispatch = useAppDispatch();
 
   const onDragEnd = async (result: DropResult) => {
@@ -64,7 +65,6 @@ export const Board: React.FC<BoardProps> = (props) => {
     dispatch(login(props.session));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  useRealtimeBoard(props.session.email);
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>

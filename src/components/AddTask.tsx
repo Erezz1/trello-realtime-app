@@ -1,7 +1,7 @@
 import { useId, useState } from "react";
 
 import { addTask } from "@/lib/supabase/tasks";
-import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { useAppDispatch } from "@/lib/hooks";
 import { PrimaryButton } from "@/ui/components/buttons";
 import { Input, TextArea } from "@/ui/components/inputs";
 import { FormContainer } from "@/ui/components/form";
@@ -10,6 +10,7 @@ import { Column } from "@/interfaces/types";
 import { addTask as addTaskAct } from "@/lib/features/board/slice";
 import { useError } from "@/hooks/useError";
 import { generateId } from "@/lib/utils/generateId";
+import { useCache } from "@/hooks/useCache";
 
 interface AddTaskProps {
   column: Column;
@@ -20,7 +21,7 @@ export const AddTask: React.FC<AddTaskProps> = ({ column }) => {
   const [isLoading, setIsLoading] = useState(false);
   const id = useId();
 
-  const { email } = useAppSelector(state => state.session.value)!;
+  const { session: { email } } = useCache();
   const dispatch = useAppDispatch();
   const showError = useError();
 

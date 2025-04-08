@@ -56,3 +56,11 @@ export const getCacheBoard = async (email: string) => {
     return null;
   }
 };
+
+export const deleteCacheBoard = async (email: string) => {
+  const { error } = await supabase
+    .from("cache")
+    .delete()
+    .eq("email", email);
+  if (error) throw error;
+};

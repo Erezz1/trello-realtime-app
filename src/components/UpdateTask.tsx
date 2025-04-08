@@ -9,6 +9,8 @@ import { FormContainer } from "@/ui/components/form";
 import { updateTask } from "@/lib/supabase/tasks";
 import { updateTask as updateTaskAtc } from "@/lib/features/board/slice";
 import { useError } from "@/hooks/useError";
+import { useCache } from "@/hooks/useCache";
+import { deleteCacheBoard } from "@/lib/supabase/board";
 
 interface UpdateTaskProps {
   task: Task;
@@ -20,6 +22,8 @@ export const UpdateTask: React.FC<UpdateTaskProps> = ({ task, columnId, setShowM
   const [newTitle, setNewTitle] = useState(task.title);
   const [newDescription, setNewDescription] = useState(task.description);
   const [isLoading, setIsLoading] = useState(false);
+
+  const { session } = useCache();
 
   const setError = useError();
 
@@ -54,6 +58,7 @@ export const UpdateTask: React.FC<UpdateTaskProps> = ({ task, columnId, setShowM
         description: newDescription,
       }
     });
+    deleteCacheBoard(session.email);
     setShowModal(false);
   };
 
