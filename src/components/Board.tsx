@@ -6,7 +6,7 @@ import { setBoard } from "@/lib/features/board/slice";
 import { useAppDispatch } from "@/lib/hooks";
 import { useCache } from "@/hooks/useCache";
 import { login } from "@/lib/features/session/slice";
-import { reorderTask } from "@/lib/supabase/tasks";
+import { updateBoard } from "@/lib/supabase/board";
 
 import { BoardContainer } from "@/ui/components/board";
 import { orderBoard } from "@/helpers/orderBoard";
@@ -47,17 +47,7 @@ export const Board: React.FC<BoardProps> = (props) => {
         ? [sourceCol]
         : [sourceCol, destCol];
 
-    try {
-      const updates = colsToUpdate.flatMap((column) =>
-        column.tasks.map((task) =>
-          reorderTask(task.id, column.id, task.position)
-        )
-      );
-
-      await Promise.all(updates);
-    } catch (error) {
-      console.error("Error actualizando posiciones en Supabase", error);
-    }
+    updateBoard(colsToUpdate, props.session.email);
   };
 
   useEffect(() => {

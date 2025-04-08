@@ -25,6 +25,16 @@ export const getBoard = async (email: string) => {
   return data?.columns as Board ?? [];
 };
 
+export const updateBoard = async (board: Board, email: string) => {
+  const boardPayload = {
+    email,
+    value: board,
+  };
+  const { error } = await await supabase.rpc("update_full_board", { board_json: boardPayload });
+
+  if (error) throw error;
+};
+
 export const setCacheBoard = async (email: string, board: Board) => {
   const stringBoard = JSON.stringify(board);
 
