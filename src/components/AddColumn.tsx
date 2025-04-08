@@ -1,3 +1,4 @@
+import { useState } from "react";
 
 import { PrimaryButton } from "@/ui/components/buttons";
 import { ColumnContainer } from "@/ui/components/column";
@@ -8,20 +9,35 @@ import { addColumn } from "@/lib/supabase/columns";
 import { useAppDispatch } from "@/lib/hooks";
 import { addColumn as addColumnAct } from "@/lib/features/board/slice";
 import { useCache } from "@/hooks/useCache";
+import { useError } from "@/hooks/useError";
 
 export const AddColumn = () => {
-  const { session } = useCache();
+  const [isLoading, setIsLoading] = useState(false);
+  const [title, setTitle] = useState("");
+
+  const { session, board } = useCache();
   const dispatch = useAppDispatch();
+  const setError = useError();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const title = formData.get("column-title") as string;
-    if (!title) return;
+    if (title.length < 5) {
+      setError("INCORRECT_DATA");
+      return;
+    }
+    const boardAlreadyExists = board.find((col) => col.title === title);
+    if (boardAlreadyExists) {
+      setError("COLUM_EXIST");
+      return;
+    }
 
+    setIsLoading(true);
     const columnAdded = await addColumn(title, session.email);
-    if (!columnAdded) return;
-
+    setIsLoading(false);
+    if (!columnAdded) {
+      setError("SERVER_ERROR");
+      return;
+    };
     dispatch(addColumnAct(columnAdded));
   };
 
@@ -32,10 +48,15 @@ export const AddColumn = () => {
           type="text"
           placeholder="Nombre de la columna"
           name="column-title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
           required
         />
-        <PrimaryButton type="submit">
-            Agregar columna
+        <PrimaryButton
+          type="submit"
+          disabled={isLoading || title.length < 5}
+        >
+          Agregar columna
         </PrimaryButton>
       </FormContainer>
     </ColumnContainer>

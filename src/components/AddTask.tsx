@@ -19,6 +19,8 @@ interface AddTaskProps {
 export const AddTask: React.FC<AddTaskProps> = ({ column }) => {
   const [ showAddInputTask, setShowAddInputTask ] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const id = useId();
 
   const { session: { email } } = useCache();
@@ -27,11 +29,10 @@ export const AddTask: React.FC<AddTaskProps> = ({ column }) => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const title = formData.get("task-title") as string;
-    const description = formData.get("task-description") as string;
-
-    if (!title || !description) return;
+    if (title.length < 5 || description.length < 10) {
+      showError("INCORRECT_DATA");
+      return;
+    }
 
     const taskAlreadyExist = column.tasks.some((task) => task.title === title);
     if (taskAlreadyExist) {
@@ -48,9 +49,12 @@ export const AddTask: React.FC<AddTaskProps> = ({ column }) => {
       position: column.tasks.length + 1
     });
     const addedTask = await addTask(stringTask, column.id);
-
     setIsLoading(false);
-    if (!addedTask) return;
+
+    if (!addedTask) {
+      showError("SERVER_ERROR");
+      return;
+    }
 
     dispatch(
       addTaskAct({
@@ -87,16 +91,20 @@ export const AddTask: React.FC<AddTaskProps> = ({ column }) => {
         type="text"
         placeholder="Nombre de la tarea"
         name="task-title"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
         required
       />
       <TextArea
         placeholder="Descripcion"
         name="task-description"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
         required
       />
       <PrimaryButton
         type="submit"
-        disabled={isLoading}
+        disabled={isLoading || title.length < 5 || description.length < 10}
       >
         Agregar tarea
       </PrimaryButton>

@@ -23,7 +23,7 @@ export const UpdateTask: React.FC<UpdateTaskProps> = ({ task, columnId, setShowM
   const [newDescription, setNewDescription] = useState(task.description);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { session } = useCache();
+  const { session, board } = useCache();
 
   const setError = useError();
 
@@ -33,9 +33,22 @@ export const UpdateTask: React.FC<UpdateTaskProps> = ({ task, columnId, setShowM
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (newTitle === task.title && newDescription === task.description)
+    if (newTitle === task.title && newDescription === task.description) {
+      setError("INCORRECT_DATA");
       return;
+    }
     setIsLoading(true);
+
+    const foundCol = board.find(col => col.id === columnId);
+    if (!foundCol) {
+      setError("COLUM_NOT_EXIST");
+      return;
+    }
+    const alreadyExists = foundCol.tasks.some(t => t.title === newTitle);
+    if (alreadyExists) {
+      setError("TASK_EXIST");
+      return;
+    }
 
     const stringTask = JSON.stringify({
       ...task,

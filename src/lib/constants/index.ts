@@ -7,6 +7,9 @@ export const SESSION_ENCRYPTION_KEY = process.env.SESSION_ENCRYPTION_KEY!;
 
 export const ERRORS_MESSAGE = {
   TASK_EXIST: "La tarea ya existe",
+  COLUM_EXIST: "La columna ya existe",
+  COLUM_NOT_EXIST: "La columna no existe",
   USER_NOT_EXIST: "El usuario no existe",
+  INCORRECT_DATA: "Los datos son incorrectos",
   SERVER_ERROR: "Ocurrio un error",
 };
