@@ -8,7 +8,7 @@ import { Input, TextArea } from "@/ui/components/inputs";
 import { FormContainer } from "@/ui/components/form";
 import { updateTask } from "@/lib/supabase/tasks";
 import { updateTask as updateTaskAtc } from "@/lib/features/board/slice";
-import { useError } from "@/hooks/useError";
+import { ErrorMessage, useError } from "@/hooks/useError";
 import { useCache } from "@/hooks/useCache";
 import { deleteCacheBoard } from "@/lib/supabase/board";
 
@@ -34,19 +34,21 @@ export const UpdateTask: React.FC<UpdateTaskProps> = ({ task, columnId, setShowM
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (newTitle === task.title && newDescription === task.description) {
-      setError("INCORRECT_DATA");
+      handleError("INCORRECT_DATA");
       return;
     }
     setIsLoading(true);
 
     const foundCol = board.find(col => col.id === columnId);
     if (!foundCol) {
-      setError("COLUM_NOT_EXIST");
+      handleError("COLUM_NOT_EXIST");
       return;
     }
-    const alreadyExists = foundCol.tasks.some(t => t.title === newTitle);
+    const alreadyExists = foundCol.tasks.some(
+      t => t.title === newTitle && t.id !== task.id
+    );
     if (alreadyExists) {
-      setError("TASK_EXIST");
+      handleError("TASK_EXIST");
       return;
     }
 
@@ -59,7 +61,7 @@ export const UpdateTask: React.FC<UpdateTaskProps> = ({ task, columnId, setShowM
 
     setIsLoading(false);
     if (!wasUpdated) {
-      setError("SERVER_ERROR");
+      handleError("SERVER_ERROR");
       return;
     }
 
@@ -73,6 +75,11 @@ export const UpdateTask: React.FC<UpdateTaskProps> = ({ task, columnId, setShowM
     });
     deleteCacheBoard(session.email);
     setShowModal(false);
+  };
+
+  const handleError = (error: ErrorMessage) => {
+    setError(error);
+    setIsLoading(false);
   };
 
   useEffect(() => {

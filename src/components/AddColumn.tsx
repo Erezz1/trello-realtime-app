@@ -9,7 +9,7 @@ import { addColumn } from "@/lib/supabase/columns";
 import { useAppDispatch } from "@/lib/hooks";
 import { addColumn as addColumnAct } from "@/lib/features/board/slice";
 import { useCache } from "@/hooks/useCache";
-import { useError } from "@/hooks/useError";
+import { useError, ErrorMessage } from "@/hooks/useError";
 
 export const AddColumn = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -22,23 +22,29 @@ export const AddColumn = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (title.length < 5) {
-      setError("INCORRECT_DATA");
+      handleError("INCORRECT_DATA");
       return;
     }
     const boardAlreadyExists = board.find((col) => col.title === title);
     if (boardAlreadyExists) {
-      setError("COLUM_EXIST");
+      handleError("COLUM_EXIST");
       return;
     }
 
     setIsLoading(true);
     const columnAdded = await addColumn(title, session.email);
     setIsLoading(false);
+
     if (!columnAdded) {
-      setError("SERVER_ERROR");
+      handleError("SERVER_ERROR");
       return;
     };
     dispatch(addColumnAct(columnAdded));
+  };
+
+  const handleError = (error: ErrorMessage) => {
+    setError(error);
+    setIsLoading(false);
   };
 
   return (
