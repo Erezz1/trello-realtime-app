@@ -79,13 +79,12 @@ export const Task: React.FC<TaskProps> = ({ task, index, columnId }) => {
             </LinkButton>
           </TaskActions>
 
-          {showUpdateModal && (
-            <UpdateTask
-              task={task}
-              setShowModal={setShowUpdateModal}
-              columnId={columnId}
-            />
-          )}
+          <UpdateTask
+            task={task}
+            columnId={columnId}
+            showModal={showUpdateModal}
+            setShowModal={setShowUpdateModal}
+          />
         </TaskCard>
       )}
     </Draggable>

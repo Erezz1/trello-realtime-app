@@ -8,22 +8,23 @@ import { Input, TextArea } from "@/ui/components/inputs";
 import { FormContainer } from "@/ui/components/form";
 import { updateTask } from "@/lib/supabase/tasks";
 import { updateTask as updateTaskAtc } from "@/lib/features/board/slice";
-import { ErrorMessage, useError } from "@/hooks/useError";
+import { useError } from "@/hooks/useError";
 import { useCache } from "@/hooks/useCache";
 
 interface UpdateTaskProps {
   task: Task;
   columnId: string;
+  showModal: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const UpdateTask: React.FC<UpdateTaskProps> = ({ task, columnId, setShowModal }) => {
+export const UpdateTask: React.FC<UpdateTaskProps> = ({ task, columnId, showModal, setShowModal }) => {
   const [newTitle, setNewTitle] = useState(task.title);
   const [newDescription, setNewDescription] = useState(task.description);
-  const [isLoading, setIsLoading] = useState(false);
+  const [prevTask] = useState(task);
+  const [disableBtn, setDisableBtn] = useState(true);
 
   const { board } = useCache();
-
   const setError = useError();
 
   const handleClose = () => {
@@ -33,37 +34,22 @@ export const UpdateTask: React.FC<UpdateTaskProps> = ({ task, columnId, setShowM
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (newTitle === task.title && newDescription === task.description) {
-      handleError("TASK_EXIST");
+      setError("TASK_EXIST");
       return;
     }
-    setIsLoading(true);
 
     const foundCol = board.find(col => col.id === columnId);
     if (!foundCol) {
-      handleError("COLUM_NOT_EXIST");
+      setError("COLUM_NOT_EXIST");
       return;
     }
     const alreadyExists = foundCol.tasks.some(
       t => t.title === newTitle && t.id !== task.id
     );
     if (alreadyExists) {
-      handleError("TASK_EXIST");
+      setError("TASK_EXIST");
       return;
     }
-
-    const stringTask = JSON.stringify({
-      ...task,
-      title: newTitle,
-      description: newDescription,
-    });
-    const wasUpdated = await updateTask(stringTask);
-
-    setIsLoading(false);
-    if (!wasUpdated) {
-      handleError("SERVER_ERROR");
-      return;
-    }
-
     updateTaskAtc({
       columnId,
       task: {
@@ -73,19 +59,45 @@ export const UpdateTask: React.FC<UpdateTaskProps> = ({ task, columnId, setShowM
       }
     });
     setShowModal(false);
-  };
 
-  const handleError = (error: ErrorMessage) => {
-    setError(error);
-    setIsLoading(false);
+    const stringTask = JSON.stringify({
+      ...task,
+      title: newTitle,
+      description: newDescription,
+    });
+    const wasUpdated = await updateTask(stringTask);
+    if (wasUpdated) return;
+
+    updateTaskAtc({
+      columnId,
+      task: prevTask
+    });
   };
 
   useEffect(() => {
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = "auto";
-    };
-  }, []);
+    if (showModal) {
+      document.body.style.overflow = "hidden";
+      return;
+    }
+    document.body.style.overflow = "auto";
+  }, [showModal]);
+
+  useEffect(() => {
+    if (newTitle === task.title && newDescription === task.description) {
+      setDisableBtn(true);
+      return;
+    }
+    if (newTitle.trim().length < 5 || newDescription.trim().length < 10) {
+      setDisableBtn(true);
+      return;
+    }
+    setDisableBtn(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [newTitle, newDescription]);
+
+  if (!showModal) {
+    return null;
+  }
 
   return (
     createPortal(
@@ -106,14 +118,11 @@ export const UpdateTask: React.FC<UpdateTaskProps> = ({ task, columnId, setShowM
             <div>
               <PrimaryButton
                 type="submit"
-                disabled={isLoading}
+                disabled={disableBtn}
               >
                 Guardar Tarea
               </PrimaryButton>
-              <SecondaryButton
-                onClick={handleClose}
-                disabled={isLoading}
-              >
+              <SecondaryButton onClick={handleClose}>
                 Cancelar
               </SecondaryButton>
             </div>
@@ -124,4 +133,3 @@ export const UpdateTask: React.FC<UpdateTaskProps> = ({ task, columnId, setShowM
     )
   );
 };
-

@@ -12,4 +12,5 @@ export const ERRORS_MESSAGE = {
   USER_NOT_EXIST: "El usuario no existe",
   INCORRECT_DATA: "Los datos son incorrectos",
   SERVER_ERROR: "Ocurrio un error",
+  TASK_NOT_EXIST: "La tarea no existe",
 };
