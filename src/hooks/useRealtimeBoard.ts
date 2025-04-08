@@ -4,7 +4,7 @@ import { useAppDispatch } from "@/lib/hooks";
 import { setBoard } from "@/lib/features/board/slice";
 
 import { orderBoard } from "@/helpers/orderBoard";
-import { getBoard } from "@/lib/supabase/board";
+import { getBoard, getCacheBoard } from "@/lib/supabase/board";
 
 export const useRealtimeBoard = (email: string) => {
   const dispatch = useAppDispatch();
@@ -15,8 +15,12 @@ export const useRealtimeBoard = (email: string) => {
 
     // Actualiza el board cuando haya un cambio en columnas o tareas
     const updateBoard = async () => {
+      let newBoard;
       try {
-        const newBoard = await getBoard(email);
+        newBoard = await getCacheBoard(email);
+        if (!newBoard)
+          newBoard = await getBoard(email);
+
         const ordered = orderBoard(newBoard);
         dispatch(setBoard(ordered));
       } catch (error) {

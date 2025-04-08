@@ -56,9 +56,27 @@ export const boardSlice = createSlice({
 
       if (taskIndex === -1) return;
       state.value[columnIndex].tasks[taskIndex] = task;
+    },
+    filterTasks: (state, action: PayloadAction<string>) => {
+      const filter = action.payload;
+
+      state.value = state.value.map(column => {
+        return {
+          ...column,
+          tasks: column.tasks.filter(task => task.title.toLowerCase().includes(filter.toLowerCase()))
+        };
+      });
     }
   },
 });
 
-export const { setBoard, addColumn, removeColumn, addTask, removeTask, updateTask } = boardSlice.actions;
+export const {
+  setBoard,
+  addColumn,
+  removeColumn,
+  addTask,
+  removeTask,
+  updateTask,
+  filterTasks
+} = boardSlice.actions;
 export default boardSlice.reducer;

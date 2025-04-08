@@ -3,7 +3,8 @@ import { useEffect } from "react";
 import { DragDropContext, Droppable, DropResult } from "@hello-pangea/dnd";
 
 import { setBoard } from "@/lib/features/board/slice";
-import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { useAppDispatch } from "@/lib/hooks";
+import { useCache } from "@/hooks/useCache";
 import { login } from "@/lib/features/session/slice";
 import { reorderTask } from "@/lib/supabase/tasks";
 
@@ -22,7 +23,7 @@ interface BoardProps {
 }
 
 export const Board: React.FC<BoardProps> = (props) => {
-  const board = useAppSelector(({ board }) => board.value);
+  const board = useCache();
   const dispatch = useAppDispatch();
 
   const onDragEnd = async (result: DropResult) => {

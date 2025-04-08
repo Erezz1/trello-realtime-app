@@ -11,10 +11,12 @@ export const reorderTask = async (taskId: string, columnId: string, position: nu
   if (error) throw error;
 };
 
-export const addTask = async (task: Task, columnId: string) => {
+export const addTask = async (task: string, columnId: string) => {
+  const jsonTask = JSON.parse(task) as Task;
+
   const { data, error } = await supabase
     .from("tasks")
-    .insert({ ...task, column_id: columnId })
+    .insert({ ...jsonTask, column_id: columnId })
     .select()
     .single();
   if (error) throw error;
@@ -31,11 +33,13 @@ export const deleteTask = async (taskId: string) => {
   return true;
 };
 
-export const updateTask = async (task: Task) => {
+export const updateTask = async (task: string) => {
+  const jsonTask = JSON.parse(task) as Task;
+
   const { error } = await supabase
     .from("tasks")
-    .update(task)
-    .eq("id", task.id);
+    .update(jsonTask)
+    .eq("id", jsonTask.id);
 
   if (error) throw error;
   return true;

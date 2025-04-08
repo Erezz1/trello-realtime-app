@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-import { login } from "@/services/session";
+import { login } from "@/lib/services/session";
 import { SESSION_COOKIE } from "@/lib/constants";
 import { setCookie } from "@/lib/actions/cookies";
 import { encryptSession } from "@/lib/actions/encrypt";

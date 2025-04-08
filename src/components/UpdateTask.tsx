@@ -8,6 +8,7 @@ import { Input, TextArea } from "@/ui/components/inputs";
 import { FormContainer } from "@/ui/components/form";
 import { updateTask } from "@/lib/supabase/tasks";
 import { updateTask as updateTaskAtc } from "@/lib/features/board/slice";
+import { useError } from "@/hooks/useError";
 
 interface UpdateTaskProps {
   task: Task;
@@ -20,6 +21,8 @@ export const UpdateTask: React.FC<UpdateTaskProps> = ({ task, columnId, setShowM
   const [newDescription, setNewDescription] = useState(task.description);
   const [isLoading, setIsLoading] = useState(false);
 
+  const setError = useError();
+
   const handleClose = () => {
     setShowModal(false);
   };
@@ -30,14 +33,18 @@ export const UpdateTask: React.FC<UpdateTaskProps> = ({ task, columnId, setShowM
       return;
     setIsLoading(true);
 
-    const wasUpdated = await updateTask({
+    const stringTask = JSON.stringify({
       ...task,
       title: newTitle,
       description: newDescription,
     });
+    const wasUpdated = await updateTask(stringTask);
 
     setIsLoading(false);
-    if (!wasUpdated)return;
+    if (!wasUpdated) {
+      setError("SERVER_ERROR");
+      return;
+    }
 
     updateTaskAtc({
       columnId,

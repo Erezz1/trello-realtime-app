@@ -7,7 +7,7 @@ import { SESSION_COOKIE } from "@/lib/constants";
 import { decryptSession } from "@/lib/actions/encrypt";
 
 import { Board } from "./Board";
-import { getBoard } from "@/lib/supabase/board";
+import { getBoard, getCacheBoard } from "@/lib/supabase/board";
 import { orderBoard } from "@/helpers/orderBoard";
 
 const BoardWrapper = async () => {
@@ -27,7 +27,11 @@ const BoardWrapper = async () => {
     return redirect("/login");
   }
 
-  const board = await getBoard(session.email);
+  let board;
+  board = await getCacheBoard(session.email);
+  if (!board)
+    board = await getBoard(session.email);
+
   const orderedBoard = orderBoard(board);
 
   return (

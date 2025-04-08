@@ -40,12 +40,13 @@ export const AddTask: React.FC<AddTaskProps> = ({ column }) => {
     setIsLoading(true);
     const generatedId = generateId(id, email);
 
-    const addedTask = await addTask({
+    const stringTask = JSON.stringify({
       title,
       description,
       id: generatedId,
       position: column.tasks.length + 1
-    }, column.id);
+    });
+    const addedTask = await addTask(stringTask, column.id);
 
     setIsLoading(false);
     if (!addedTask) return;
