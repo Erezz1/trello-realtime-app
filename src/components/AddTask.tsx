@@ -1,13 +1,15 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 
 import { addTask } from "@/lib/supabase/tasks";
-import { useAppDispatch } from "@/lib/hooks";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { PrimaryButton } from "@/ui/components/buttons";
 import { Input, TextArea } from "@/ui/components/inputs";
 import { FormContainer } from "@/ui/components/form";
 
 import { Column } from "@/interfaces/types";
 import { addTask as addTaskAct } from "@/lib/features/board/slice";
+import { useError } from "@/hooks/useError";
+import { generateId } from "@/lib/utils/generateId";
 
 interface AddTaskProps {
   column: Column;
@@ -16,8 +18,11 @@ interface AddTaskProps {
 export const AddTask: React.FC<AddTaskProps> = ({ column }) => {
   const [ showAddInputTask, setShowAddInputTask ] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const id = useId();
 
+  const { email } = useAppSelector(state => state.session.value)!;
   const dispatch = useAppDispatch();
+  const showError = useError();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -26,14 +31,21 @@ export const AddTask: React.FC<AddTaskProps> = ({ column }) => {
     const description = formData.get("task-description") as string;
 
     if (!title || !description) return;
-    setIsLoading(true);
 
-    const addedTask = await addTask(
+    const taskAlreadyExist = column.tasks.some((task) => task.title === title);
+    if (taskAlreadyExist) {
+      showError("TASK_EXIST");
+      return;
+    }
+    setIsLoading(true);
+    const generatedId = generateId(id, email);
+
+    const addedTask = await addTask({
       title,
       description,
-      column.id,
-      column.tasks.length + 1
-    );
+      id: generatedId,
+      position: column.tasks.length + 1
+    }, column.id);
 
     setIsLoading(false);
     if (!addedTask) return;

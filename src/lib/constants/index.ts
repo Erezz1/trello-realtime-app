@@ -4,3 +4,9 @@ export const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiO
 
 export const SESSION_API_URL = process.env.SESSION_API_URL!;
 export const SESSION_ENCRYPTION_KEY = process.env.SESSION_ENCRYPTION_KEY!;
+
+export const ERRORS_MESSAGE = {
+  TASK_EXIST: "La tarea ya existe",
+  USER_NOT_EXIST: "El usuario no existe",
+  SERVER_ERROR: "Ocurrio un error",
+};

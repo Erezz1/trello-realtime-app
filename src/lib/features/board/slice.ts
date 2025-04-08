@@ -28,23 +28,37 @@ export const boardSlice = createSlice({
       const columnIndex = state.value.findIndex(
         column => column.id === columnId
       );
-      if (columnIndex !== -1) {
-        state.value[columnIndex].tasks = [...state.value[columnIndex].tasks, task];
-      }
+
+      if (columnIndex === -1) return;
+      state.value[columnIndex].tasks = [...state.value[columnIndex].tasks, task];
     },
     removeTask: (state, action: PayloadAction<{ columnId: string, taskId: string }>) => {
       const { columnId, taskId } = action.payload;
       const columnIndex = state.value.findIndex(
         column => column.id === columnId
       );
-      if (columnIndex !== -1) {
-        state.value[columnIndex].tasks = state.value[columnIndex].tasks.filter(
-          task => task.id !== taskId
-        );
-      }
+
+      if (columnIndex === -1) return;
+      state.value[columnIndex].tasks = state.value[columnIndex].tasks.filter(
+        task => task.id !== taskId
+      );
     },
+    updateTask: (state, action: PayloadAction<{ columnId: string, task: Task }>) => {
+      const { columnId, task } = action.payload;
+      const columnIndex = state.value.findIndex(
+        column => column.id === columnId
+      );
+
+      if (columnIndex === -1) return;
+      const taskIndex = state.value[columnIndex].tasks.findIndex(
+        task => task.id === task.id
+      );
+
+      if (taskIndex === -1) return;
+      state.value[columnIndex].tasks[taskIndex] = task;
+    }
   },
 });
 
-export const { setBoard, addColumn, removeColumn, addTask, removeTask } = boardSlice.actions;
+export const { setBoard, addColumn, removeColumn, addTask, removeTask, updateTask } = boardSlice.actions;
 export default boardSlice.reducer;

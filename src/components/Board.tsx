@@ -5,7 +5,7 @@ import { DragDropContext, Droppable, DropResult } from "@hello-pangea/dnd";
 import { setBoard } from "@/lib/features/board/slice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { login } from "@/lib/features/session/slice";
-import { updateTask } from "@/lib/supabase/tasks";
+import { reorderTask } from "@/lib/supabase/tasks";
 
 import { BoardContainer } from "@/ui/components/board";
 import { orderBoard } from "@/helpers/orderBoard";
@@ -48,7 +48,7 @@ export const Board: React.FC<BoardProps> = (props) => {
     try {
       const updates = colsToUpdate.flatMap((column) =>
         column.tasks.map((task) =>
-          updateTask(task.id, column.id, task.position)
+          reorderTask(task.id, column.id, task.position)
         )
       );
 

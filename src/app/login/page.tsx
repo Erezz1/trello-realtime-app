@@ -14,9 +14,11 @@ import {
 } from "@/ui/pages/login";
 import { Input } from "@/ui/components/inputs";
 import { PrimaryButton } from "@/ui/components/buttons";
+import { useError } from "@/hooks/useError";
 
 const Login = () => {
   const router = useRouter();
+  const setError = useError();
 
   const [isLoading, setIsLoading] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
@@ -40,7 +42,7 @@ const Login = () => {
     }
 
     setIsLoading(false);
-    alert("Credenciales inválidas");
+    setError("USER_NOT_EXIST");
   };
 
   useEffect(() => {

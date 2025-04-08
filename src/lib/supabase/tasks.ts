@@ -2,7 +2,7 @@
 import { supabase } from "@/lib/supabase/client";
 import { Task } from "@/interfaces/types";
 
-export const updateTask = async (taskId: string, columnId: string, position: number) => {
+export const reorderTask = async (taskId: string, columnId: string, position: number) => {
   const { error } = await supabase
     .from("tasks")
     .update({ column_id: columnId, position })
@@ -11,17 +11,32 @@ export const updateTask = async (taskId: string, columnId: string, position: num
   if (error) throw error;
 };
 
-export const addTask = async (title: string, description: string, columnId: string, position: number) => {
+export const addTask = async (task: Task, columnId: string) => {
   const { data, error } = await supabase
     .from("tasks")
-    .insert({ title, description, column_id: columnId, position })
+    .insert({ ...task, column_id: columnId })
     .select()
     .single();
   if (error) throw error;
 
-  return {
-    id: data.id,
-    title,
-    description
-  } as Task;
+  return data as Task;
+};
+
+export const deleteTask = async (taskId: string) => {
+  const { error } = await supabase
+    .from("tasks")
+    .delete()
+    .eq("id", taskId);
+  if (error) throw error;
+  return true;
+};
+
+export const updateTask = async (task: Task) => {
+  const { error } = await supabase
+    .from("tasks")
+    .update(task)
+    .eq("id", task.id);
+
+  if (error) throw error;
+  return true;
 };

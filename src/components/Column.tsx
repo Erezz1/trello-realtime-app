@@ -19,7 +19,12 @@ export const Column: React.FC<ColumnProps> = ({ provided, column }) => {
       <ColumnTitle>{column.title}</ColumnTitle>
       <AddTask column={column} />
       {column.tasks.map((task, index) => (
-        <Task task={task} index={index} key={task.id} />
+        <Task
+          task={task}
+          index={index}
+          key={task.id}
+          columnId={column.id}
+        />
       ))}
       {provided.placeholder}
     </ColumnContainer>

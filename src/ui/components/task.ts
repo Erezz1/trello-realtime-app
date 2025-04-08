@@ -1,4 +1,3 @@
-"use client";
 import styled from "styled-components";
 
 export const TaskCard = styled.div`
@@ -8,6 +7,7 @@ export const TaskCard = styled.div`
   padding: 12px;
   margin-bottom: 8px;
   cursor: pointer;
+  position: relative;
 `;
 
 export const TaskTitle = styled.h3`
@@ -19,4 +19,10 @@ export const TaskDescription = styled.p`
   font-size: 12px;
   color: #5e6c84;
   margin-top: 4px;
+`;
+
+export const TaskActions = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
 `;
