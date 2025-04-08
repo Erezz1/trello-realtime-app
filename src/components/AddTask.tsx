@@ -55,6 +55,8 @@ export const AddTask: React.FC<AddTaskProps> = ({ column }) => {
       showError("SERVER_ERROR");
       return;
     }
+    setTitle("");
+    setDescription("");
 
     dispatch(
       addTaskAct({

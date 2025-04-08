@@ -10,7 +10,6 @@ import { updateTask } from "@/lib/supabase/tasks";
 import { updateTask as updateTaskAtc } from "@/lib/features/board/slice";
 import { ErrorMessage, useError } from "@/hooks/useError";
 import { useCache } from "@/hooks/useCache";
-import { deleteCacheBoard } from "@/lib/supabase/board";
 
 interface UpdateTaskProps {
   task: Task;
@@ -23,7 +22,7 @@ export const UpdateTask: React.FC<UpdateTaskProps> = ({ task, columnId, setShowM
   const [newDescription, setNewDescription] = useState(task.description);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { session, board } = useCache();
+  const { board } = useCache();
 
   const setError = useError();
 
@@ -34,7 +33,7 @@ export const UpdateTask: React.FC<UpdateTaskProps> = ({ task, columnId, setShowM
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (newTitle === task.title && newDescription === task.description) {
-      handleError("INCORRECT_DATA");
+      handleError("TASK_EXIST");
       return;
     }
     setIsLoading(true);
@@ -73,7 +72,6 @@ export const UpdateTask: React.FC<UpdateTaskProps> = ({ task, columnId, setShowM
         description: newDescription,
       }
     });
-    deleteCacheBoard(session.email);
     setShowModal(false);
   };
 
