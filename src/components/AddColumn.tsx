@@ -40,6 +40,7 @@ export const AddColumn = () => {
       return;
     };
     dispatch(addColumnAct(columnAdded));
+    setTitle("");
   };
 
   const handleError = (error: ErrorMessage) => {

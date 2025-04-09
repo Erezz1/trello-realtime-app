@@ -2,24 +2,29 @@
   {
     "id": "column-1",
     "title": "To Do",
+    "position": 1,
     "tasks": [
       {
         "id": "task-1",
+        "position": 1,
         "title": "Task 1",
         "description": "Do something"
       },
       {
         "id": "task-2",
+        "position": 2,
         "title": "Task 2",
         "description": "Do something else"
       },
       {
         "id": "task-4",
+        "position": 3,
         "title": "Task 4",
         "description": "Do something else"
       },
       {
         "id": "task-5",
+        "position": 4,
         "title": "Task 5",
         "description": "Do something else"
       }
@@ -28,14 +33,17 @@
   {
     "id": "column-2",
     "title": "In Progress",
+    "position": 2,
     "tasks": [
       {
         "id": "task-3",
+        "position": 1,
         "title": "Task 3",
         "description": "Keep going"
       },
       {
         "id": "task-6",
+        "position": 2,
         "title": "Task 6",
         "description": "Do something else"
       }

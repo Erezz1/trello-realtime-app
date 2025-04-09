@@ -6,13 +6,18 @@ import { HeaderContainer } from "@/ui/pages/dashboard";
 import { PrimaryButton } from "@/ui/components/buttons";
 import { Input } from "@/ui/components/inputs";
 import { deleteCookie } from "@/lib/actions/cookies";
-import { filterTasks } from "@/lib/features/board/slice";
+import { setBoard } from "@/lib/features/board/slice";
 import { useAppDispatch } from "@/lib/hooks";
 import { SESSION_COOKIE } from "@/lib/constants";
+import { getBoardFilteringTasksByTitle } from "@/lib/supabase/board";
+import { useCache } from "@/hooks/useCache";
 
 export const Header = () => {
   const router = useRouter();
+  const { session } = useCache();
+
   const [filter, setFilter] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const dispatch = useAppDispatch();
 
@@ -21,9 +26,15 @@ export const Header = () => {
     router.push("/login");
   };
 
-  const handleFilter = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleFilter = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    dispatch(filterTasks(filter));
+    setIsLoading(true);
+
+    const data = await getBoardFilteringTasksByTitle(session.email, filter);
+    setIsLoading(false);
+    if (!data) return;
+
+    dispatch(setBoard(data));
   };
 
   return (
@@ -36,7 +47,10 @@ export const Header = () => {
           onChange={e => setFilter(e.target.value)}
           value={filter}
         />
-        <PrimaryButton type="submit">
+        <PrimaryButton
+          type="submit"
+          disabled={isLoading || filter.length < 2}
+        >
           Buscar
         </PrimaryButton>
       </form>
