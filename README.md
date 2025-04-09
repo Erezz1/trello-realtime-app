@@ -1,36 +1,93 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🧩 Trello Clone
 
-## Getting Started
+## 🚀 Tecnologías
 
-First, run the development server:
+- **Next.js** + **React**
+- **Supabase**
+- **WebSockets**
+- **Redux Toolkit**
+- **Styled-components**
+- **Playwright**
+- **TypeScript**
+
+## Instalación
+1. Clona el repositorio
+2. Instala las dependencias con `pnpm install`
+4. Ejecuta `pnpm dev` para iniciar la aplicació
+
+
+## 📦 Características
+
+✅ Autenticación con encriptación de token y uso de TOtp
+✅ Renderizado condicional según el estado de autenticación
+✅ Drag & Drop de columnas y tareas  
+✅ CRUD completo de columnas y tareas  
+✅ Ordenamiento de columnas y tareas
+✅ Validación de formularios
+✅ Filtro de tareas por título
+✅ Actualización en tiempo real vía **WebSockets**  
+✅ Uso de bloque optimista
+✅ Persistencia de datos en Supabase
+✅ Tests end-to-end con Playwright
+
+
+## 🧠 Arquitectura
+
+- El estado del tablero se almacena en **Redux**, estructurado en `columns` y `tasks`. Siguiendo arquitectura **FLUX**.
+- Al hacer login, se busca el tablero con el email del usuario (`boards`).
+  - Si no existe, se **crea automáticamente**.
+- Los cambios en el tablero se reflejan en la base de datos y en el estado global.
+- Se usan hooks personalizados:
+  - `useWebsockets` escucha cambios en Supabase.
+
+
+## 🗃️ Base de datos (Supabase)
+
+### Tablas principales:
+
+- `boards`: `{ id, email }`
+- `columns`: `{ id, title, board_id, position }`
+- `tasks`: `{ id, title, description, column_id, position, updated_at }`
+
+
+## ⚙️ Scripts
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+# Desarrollo
 pnpm dev
-# or
-bun dev
+
+# Build
+pnpm build
+
+# Test E2E
+pnpm test:e2e
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🖼️ Skeleton Loading
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Durante la carga del tablero, se muestra un `SkeletonBoard` con CSS que simula la estructura del tablero.
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+## 📁 Estructura base
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+src/
+├── app/
+├── components/
+├── helpers/
+├── hooks/
+├── interfaces/
+├── lib/
+│   ├── actions/
+│   ├── constants/
+│   ├── features/
+│   ├── services/
+│   ├── supabase/
+│   └── utils/
+├── mocks/
+├── tests/
+├── hooks.ts
+├── registry.tsx
+└── store.ts
+```
