@@ -1,7 +1,7 @@
+import { redirect } from "next/navigation";
+
 const Home = () => {
-  return (
-    <h1>Home</h1>
-  );
+  return redirect("/dashboard");
 };
 
 export default Home;
